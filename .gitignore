@@ -1,0 +1,35 @@
+# Ignore node_modules in both client and server
+/client/frontend/node_modules/
+server/node_modules/
+
+# Ignore log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Ignore build outputs (if any)
+client/frontend/dist/
+client/frontend/dist-ssr/
+server/dist/
+server/dist-ssr/
+
+# Ignore local environment files
+server/.env
+
+# Ignore editor-specific files
+/.vscode/
+!.vscode/extensions.json
+/.idea/
+/.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore any other common unwanted files
+*.local
