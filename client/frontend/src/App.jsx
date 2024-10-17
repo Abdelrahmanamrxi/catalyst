@@ -4,6 +4,7 @@ import Layout from "./layout/Layout"
 import Home from "./pages/Home"
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
+import Loading from './layout/Loading'
 import { Suspense, useState,createContext,lazy,useMemo, useEffect  } from 'react'
 
 export const CartContext=createContext({cart:[],set_cart:()=>{}});
@@ -14,6 +15,7 @@ const ScrollTop =lazy(()=>import('./utility/ScrollTop'))
 
 
 function App() {
+  
   const [cart,set_cart]=useState(()=>{return JSON.parse(localStorage.getItem('cart'))||[]});
   function RemovefromCart(_id){
     const existingProd=cart.find((product)=>product.ProductID===_id)
@@ -67,7 +69,7 @@ useEffect(()=>{
   return (
     <CartContext.Provider value={value}>
    <BrowserRouter>
-   <Suspense fallback={<h1>Loading..</h1>}>
+   <Suspense fallback={<Loading/>}>
    <ScrollTop/>
     <Routes>
       <Route element={

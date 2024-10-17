@@ -50,7 +50,7 @@ export default function Home() {
   ))}
  </div>
  <div className='flex justify-center '>
-  <Link to="/shop"> <button className='mt-5 max-w-xs border-black border-2 px-8 py-2 hover:bg-black hover:text-white  text-black font-bold uppercase '>View All Products</button></Link>
+  <Link to="/shop"> <button className='mt-16 mb-10 max-w-xs border-black border-2 px-8 py-2 hover:bg-black hover:text-white  text-black font-bold uppercase '>View All Products</button></Link>
  </div>
  </div>
   

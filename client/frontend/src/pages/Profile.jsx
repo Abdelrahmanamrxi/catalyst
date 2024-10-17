@@ -101,7 +101,7 @@ import { Logout,DecodeJWT } from '../utility/functions';
   let input_design="w-2/3 md:w-1/3 bg-transparent border-2 p-2  shadow-md md:text-black placeholder:text-slate-400  text-sm  border-slate-300 rounded-md py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300  focus:shadow"
   return (
    
-    <div className='h-[120vh]'>
+    <div className='min-h-screen'>
          <h1 onClick={()=>{navigate(-1)}} className='m-5  font-extrabold text-xl tracking-wide flex items-center gap-2 cursor-pointer flex-row'><IoMdArrowRoundBack/>Back</h1>
         <div className='flex flex-col  justify-center items-center m-12 '>
             <img className='w-12 mb-5' src={user}/>

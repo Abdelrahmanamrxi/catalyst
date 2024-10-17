@@ -47,9 +47,9 @@ function Signup() {
   }
 
   return (
-    <div className="flex flex-row h-screen md:h-[full]  relative">
+    <div className="flex flex-row min-h-screen md:h-[full]  relative">
       <img
-        className={`w-full md:w-1/2 h-full object-cover stransition-transform duration-500 ${isSignUp ? 'md:translate-x-0' : 'md:translate-x-full '} `}
+        className={`w-full md:w-1/2 h-screen object-cover transition-transform duration-500 ${isSignUp ? 'md:translate-x-0' : 'md:translate-x-full '} `}
         src={img}
         alt="image"
       />

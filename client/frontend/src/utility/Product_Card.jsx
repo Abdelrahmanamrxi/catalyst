@@ -4,7 +4,7 @@ import {memo} from 'react'
 
 
  function Product_Card({id,image,discount,title,price,rating,_id,cart,addtocart}) {
-
+  
  
    return(
     <div key={id} className="relative w-full flex justify-center flex-col overflow-hidden rounded-lg border  border-gray-100 bg-white shadow-md">

@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 import { lazy, memo } from 'react'
 function Footer() {
   return (
-    <div data-aos="fade-up"  className={` bg-gradient-to-r from-black via-black  to-gray-500 
-     text-white bg-cover h-full bg-center md:pt-24 pt-24 mt-32 relative `}>
+    <div   className={` bg-gradient-to-r from-black via-black  to-gray-500 
+     text-white bg-cover h-full bg-center md:pt-24 pt-24  relative `}>
     
       <div className="p-8">
        <div className="flex items-start md:items-center gap-5 md:gap-0 justify-between flex-col  md:flex-row ">
