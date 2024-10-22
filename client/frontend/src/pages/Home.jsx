@@ -7,14 +7,18 @@ import About from './About'
 import axios from 'axios'
 import Product_Card from '../utility/Product_Card'
 import { CartContext } from '../App'
+import Loading from '../layout/Loading'
 export default function Home() {
+  const[loading,set_loading]=useState(false)
  const {cart,addtocart}=useContext(CartContext)
   const [showcase_products,set_products]=useState([])
   useEffect(()=>{
     async function ShowCase_Products(){
      try{
+      set_loading(true)
       const response=await axios.get('http://localhost:5000/api/products?limit=3')
       set_products(response.data.getProducts)
+      set_loading(false)
       }
     catch(err){
       console.log(err)
@@ -42,10 +46,10 @@ export default function Home() {
   </div>
 
   <About/>
-  <div data-aos="fade-up" className='m-5 '>
+  <div data-aos="fade-up" className='m-5'>
  <h1 className="text-4xl font-bold mb-5 font-serif">Our Shop</h1>
  <div className='sm:flex-row flex-col flex justify-center gap-4 '>
-  {showcase_products.map((products)=>(
+  {loading?<Loading/>:showcase_products.map((products)=>(
     <Product_Card cart={cart} addtocart={addtocart} key={products.id} {...products}/>
   ))}
  </div>

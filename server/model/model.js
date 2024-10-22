@@ -31,7 +31,7 @@ const user=mongoose.Schema({
     }
     ,updatedAt: { type: Date } 
 })
-const cart=mongoose.Schema({
+const order=mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
@@ -47,8 +47,7 @@ const cart=mongoose.Schema({
     ,quantity:{
         required:true,
         type:Number,
-        min:1,
-        max:5
+        min:1
     },
     price:{
         type:Number,

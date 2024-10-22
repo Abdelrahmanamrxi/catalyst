@@ -53,8 +53,8 @@ window.scrollTo(0,0)
     return(
 <div>
 
-{loader?(<Loading/>):( <div className="flex flex-col min-h-screen">
-    <div className=" m-2  grid items-start gap-3  grid-cols-2  sm:grid-cols-3">
+{loader?(<Loading/>):( <div className="flex flex-col min-h-screen ">
+    <div className=" mt-5  grid items-start gap-3  grid-cols-2  sm:grid-cols-3">
        
       {all_products.map((product)=>{
        return <Product_Card cart={cart} addtocart={addtocart} key={product.id} {...product}/>

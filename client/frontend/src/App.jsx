@@ -6,7 +6,7 @@ import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import Loading from './layout/Loading'
 import { Suspense, useState,createContext,lazy,useMemo, useEffect  } from 'react'
-
+import Checkout from './pages/Checkout'
 export const CartContext=createContext({cart:[],set_cart:()=>{}});
 
 const Product=lazy(()=>import('./pages/Product'))
@@ -71,7 +71,9 @@ useEffect(()=>{
    <BrowserRouter>
    <Suspense fallback={<Loading/>}>
    <ScrollTop/>
+  
     <Routes>
+    <Route path='/checkout' element={<Checkout/>}/>
       <Route element={
        
         <Layout/>
@@ -85,6 +87,7 @@ useEffect(()=>{
      
         
         }/>
+       
       
       <Route path={`/:id`} element={
       
