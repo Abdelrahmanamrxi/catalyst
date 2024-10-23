@@ -5,7 +5,7 @@ import Home from "./pages/Home"
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import Loading from './layout/Loading'
-import { Suspense, useState,createContext,lazy,useMemo, useEffect  } from 'react'
+import { Suspense, useState,createContext,lazy,useMemo, useEffect, useCallback  } from 'react'
 import Checkout from './pages/Checkout'
 export const CartContext=createContext({cart:[],set_cart:()=>{}});
 
@@ -15,9 +15,9 @@ const ScrollTop =lazy(()=>import('./utility/ScrollTop'))
 
 
 function App() {
-  
+  const [cartMenu,set_cartMenu]=useState(false);
   const [cart,set_cart]=useState(()=>{return JSON.parse(localStorage.getItem('cart'))||[]});
-  function RemovefromCart(_id){
+  const RemovefromCart=useCallback((_id)=>{
     const existingProd=cart.find((product)=>product.ProductID===_id)
    if(existingProd){
     set_cart(prev=>{
@@ -38,32 +38,36 @@ function App() {
     })
    }
 
-  }
-  function addtocart(_id,price,title,image){
+  },[cart])
+  const addtocart= useCallback((_id,price,title,image)=>{
     const existingProd=cart.find((product)=>product.ProductID===_id)
     if(!existingProd){
+      set_cartMenu(true)
       set_cart(prev=>[...prev,{ProductID:_id,quantity:1,price:price,title:title,image}])
     }
       else{
       set_cart(prev=>{
         return prev.map(product=>{
         if(product.ProductID===_id){
+          set_cartMenu(true)
          return {...product,quantity:product.quantity+1}
           }
-        else 
+        else{
+        set_cartMenu(true)
         return product;
+        }
       })
     })
    
   }
 
-  }
+  },[cart])
 useEffect(()=>{
   localStorage.setItem('cart',JSON.stringify(cart))
  
   
 },[cart])
-  const value=useMemo(()=>({cart,addtocart,RemovefromCart}),[cart])
+  const value=useMemo(()=>({cart,addtocart,RemovefromCart,cartMenu,set_cartMenu}),[cart,cartMenu,addtocart,RemovefromCart,set_cartMenu])
   
  
   return (

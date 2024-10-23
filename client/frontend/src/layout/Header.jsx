@@ -15,10 +15,11 @@ import { useState } from "react"
  function Header({children}) {
   const [sum,set_sum]=useState(0) 
   const [Menu,set_menu]=useState(false)
-  const [cartMenu,set_cartMenu]=useState(false);
+
   const navigate=useNavigate()
   
-  const {cart}=useContext(CartContext)
+  const {cart,cartMenu,set_cartMenu}=useContext(CartContext)
+  
  
   useEffect(()=>{
   const TotalCapacity=cart.reduce((acc,product)=>{
@@ -49,7 +50,7 @@ import { useState } from "react"
     )}
   
    
-    <div className="flex items-center justify-between p-3 sticky top-0 bg-white opacity-95 shadow z-50">
+    <div className="flex items-center justify-between p-3 sticky top-0 bg-white opacity-90 shadow z-50">
       
     <nav className="flex flex-col items-center justify-center ">
      

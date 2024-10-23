@@ -7,6 +7,7 @@ export default function Cart() {
  
     const cart=JSON.parse(localStorage.getItem('cart'))
    const {addtocart,RemovefromCart}=useContext(CartContext)
+   
    const [sum,set_sum]=useState(0)
    const token=localStorage.getItem('Token')
    const navigate=useNavigate()
@@ -33,7 +34,7 @@ useEffect(()=>{
    
     {product.quantity>0?<div className="flex gap-2 flex-col ">
       
-      <div className="flex flex-col mb-8 items-start"> {/* Align items to the start (left) */}
+      <div className="flex flex-col mb-8 items-start"> 
         <div className="flex flex-row justify-between items-center w-full">
   <img className="md:max-w-20 max-w-16 rounded-md" src={product.image} alt={product.title} />
   <h1 className="font-thin font-sans">{product.price} L.E</h1>
