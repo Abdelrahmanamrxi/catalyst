@@ -160,7 +160,33 @@ export default function Checkout() {
                 )}
               </div>
             </div>
-    
+            
+            <div className="md:hidden  flex flex-col">
+    {order.map((product)=>{
+      return(
+        <div className="flex mb-5 border-b-2 shadow-md border-black rounded-lg p-3 flex-row items-center justify-between gap-2" key={product.productID}>
+         <div className="">
+          <img className="w-14 rounded-md" src={product.image}/>
+          <h1 className="mt-3 font-sans font-semibold text-md">{product.title}</h1>
+          </div>
+          <h1 className="font-sans">{product.price} EGP</h1>
+         
+          </div>
+      )
+    })}
+    <div className="flex flex-row mb-2 items-center justify-between ">
+  <h1>Subtotal</h1>
+  <h1 className="font-bold font-sans text-lg">{sum}.00 EGP</h1>
+</div>
+<div className="flex  flex-row mb-3 items-center justify-between">
+  <h1 className="font-sans">Shipping</h1>
+  <h1 className="font-bold font-sans text-lg">FREE</h1>
+</div>
+<div className="flex mb-5  flex-row items-center justify-between">
+  <h1 className="font-bold text-2xl font-sans">Total</h1>
+<h1 className="font-bold text-xl font-sans">{sum} EGP</h1>
+</div>
+</div>
             <button
               type="submit"
               className="bg-green-700 font-sans font-semibold hover:bg-green-900 px-3 py-2  focus:outline-blue-700 mb-8 uppercase rounded-sm text-white w-full"
@@ -169,6 +195,7 @@ export default function Checkout() {
             </button>
           </form>
         </div>
+        
     
         {/* Right Section: Order Summary */}
         <div className="md:w-1/2 w-full hidden md:flex mt-9 mb-4 ml-12 items-center md:justify-center">
@@ -210,6 +237,8 @@ export default function Checkout() {
             </div>
           </div>
         </div>
+
+        
       </div>
     );
     
