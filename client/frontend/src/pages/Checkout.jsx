@@ -1,245 +1,350 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { MdOutlinePayment } from "react-icons/md";
 import { useLocation } from "react-router-dom";
+import { DecodeJWT } from "../utility/functions";
+import Error from "../layout/Error";
+import  img from '../assets/check.png'
+import { CartContext } from "../App";
+import { useContext } from "react";
+import  axios from 'axios'
+import ScrollTop from "../utility/ScrollTop";
+import { useCallback } from "react";
 
 export default function Checkout() {
-    const order=JSON.parse(localStorage.getItem('cart'))
+
+  const [paypal,set_paypal]=useState(false)
+  const[error,set_error]=useState("")
+  const[message_success,set_message]=useState('')
+  const location=useLocation();
+  const {set_cart}=useContext(CartContext)
+  
+  const token=localStorage.getItem('Token')
+  const value=DecodeJWT(token)
+  const userId=value.userId
+  const sum=location.state.sum
+    const items=JSON.parse(localStorage.getItem('cart'))
+    const [order_info,set_order]=useState({
+      userId,
+      email:'',
+      country:'Egypt',
+      first_name:'',
+      last_name:'',
+      address:'',
+      apartment:'',
+      state:'',
+      phone:'', 
+      payment_type:'',
+      payment:{
+      card_number:'',
+      security_code:'',
+      expiration_date:''},
+      items,
+      Total_Price:sum
+    })
+ const handleChange=(event)=>{
+  const {name,value}=event.target
+  
+  if(order_info.payment_type==="credit"&&['card_number','security_code','expiration_date'].includes(name)){
+   set_order((prev_order)=>{
+    return {...prev_order,payment:{...prev_order.payment,[name]:value}}
+   })
+  }
+  else{
+    set_order({...order_info,[name]:value})
+  }
+}
+
+
+    const handleSubmit =useCallback(async(e)=>{
+      e.preventDefault()
+      
+      let orderData={...order_info}
+      delete orderData.items.image
+      if(orderData.payment_type==="COD"){
+        delete orderData.card_number
+        delete orderData.security_code
+        delete orderData.expiration_date
+      }
+      try{
+        set_error('')
+        set_message('')
+      const response=await axios.post('http://localhost:5000/api/orders',orderData)
+      set_message("Your Order has been created succesfully")
+      localStorage.removeItem('cart')
+      set_cart([])   
+      }
+      catch(err){
+       console.log(err)
+       set_error(err.response.data.msg)
+      }
+
+    },[order_info,set_cart])
+ 
     const governorates = [
         "Cairo", "Alexandria", "Giza", "Dakahlia", "Red Sea", "Beheira", "Fayoum",
         "Gharbia", "Ismailia", "Monufia", "Minya", "Qaliubiya", "New Valley", 
         "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharkia", 
         "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", 
         "Sohag"]
-        const [paypal,set_paypal]=useState(false)
-    const location=useLocation();
-    const sum=location.state.sum
+
     return (
-      <div className="m-5 md:flex md:flex-row h-screen">
-        {/* Left Section: Form */}
-        <div className="md:w-1/2 w-full flex flex-col">
-          <form>
-            <div className="flex items-center justify-center mt-9 mb-4">
-              <h1 className="text-3xl font-sans font-bold">Checkout</h1>
+      <div>
+      {message_success?(
+        <div className="flex justify-center flex-col items-center text-xl md:text-2xl mt-10">
+          <h1 className="text-3xl font-sans font-bold mb-10">Checkout</h1>
+          <div className="flex   gap-2 flex-row items-center ">
+        <h1 className="font-bold text-green-600">Your Order has been placed </h1>
+        <img className="w-9" src={img}/>
+        </div>
+        </div>
+        ):(<div className="m-5 md:flex md:flex-row h-screen">
+    
+    {/* Left Section: Form */}
+    <div className="md:w-1/2 w-full flex flex-col">
+    
+        <div className="flex flex-col items-center justify-center mt-9 mb-4">
+          <h1 className="text-3xl font-sans font-bold">Checkout</h1>
+          {(<Error message={error}/>)}
+        </div>
+      
+        <form onChange={(e)=>{handleChange(e)}} onSubmit={(e)=>{handleSubmit(e)}}>
+        <h1 className="text-2xl font-sans font-bold mb-3">Contact</h1>
+
+        <div className="flex flex-col">
+          <div>
+            <label className="mb-2 text-base block">Email</label>
+            <input
+              type="email"
+              name="email" 
+              placeholder="jack@gmail.com"
+              className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+            />
+          </div>
+
+          <h1 className="text-2xl font-sans font-bold mb-5">Payment Information</h1>
+
+          <div>
+            <label className="mb-2 text-base block">Country</label>
+            <input
+              type="text"
+              name="country"
+              placeholder="Egypt"
+              disabled
+              className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+            />
+          </div>
+
+          <div className="flex md:flex-row flex-col md:space-x-3">
+            <div className="w-full">
+              <label className="mb-2 text-base block">First Name</label>
+              <input
+                type="text"
+                name="first_name"
+                placeholder="First Name"
+                className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+              />
             </div>
-    
-            <h1 className="text-2xl font-sans font-bold mb-3">Contact</h1>
-    
-            <div className="flex flex-col">
-              <div>
-                <label className="mb-2 text-base block">Email</label>
+            <div className="w-full">
+              <label className="mb-2 text-base block">Last Name</label>
+              <input
+                type="text"
+                name="last_name"
+                placeholder="Last Name"
+                className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="w-full">
+            <label className="mb-2 text-base block">Address</label>
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+            />
+          </div>
+
+          <div className="w-full">
+            <label className="mb-2 text-base block">Apartment or Suite</label>
+            <input
+              type="text"
+              name="apartment"
+              placeholder="Apartment, Suite, etc."
+              className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 text-base block">Governorate</label>
+            <select name="state" className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500">
+              <option value="">Select Governorate</option>
+              {governorates.map((governorate, index) => (
+                <option  key={index} value={governorate}>
+                  {governorate}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="w-full">
+            <label className="mb-2 text-base block">Phone</label>
+            <input
+              type="text"
+              name="phone"
+              placeholder="+20"
+              className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+            />
+          </div>
+
+          <h1 className="mt-5 mb-3 text-2xl font-sans font-bold">Payment Method</h1>
+
+          <div className="border-1 flex flex-row gap-1 border-black px-2 py-2">
+            <input type="radio" name="payment_type" value="COD" />{" "}
+            <h1>Cash On Delivery (COD)</h1>
+          </div>
+
+          <div
+            className={`border-1 mb-10 border-black ${
+              paypal ? "bg-gray-200" : "bg-white"
+            } ${paypal ? "border-b-1" : ""} px-2 py-2 rounded-md`}
+          >
+            <div className="flex flex-row gap-1 items-center">
+              <input
+                onClick={() => {
+                  set_paypal(!paypal);
+                }}
+                type="radio"
+                name="payment_type"
+                value="credit"
+              />{" "}
+              <h1 className="flex flex-row items-center font-sans text-lg gap-3">
+                Credit Card <MdOutlinePayment />
+              </h1>
+            </div>
+
+            {paypal && (
+              <div className="w-full mt-3">
+                <hr />
+                <label className="mb-2 text-base block">Card Number</label>
                 <input
-                  type="email"
-                  placeholder="jack@gmail.com"
-                  className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                />
-              </div>
-    
-              <h1 className="text-2xl font-sans font-bold mb-5">Payment Information</h1>
-    
-              <div>
-                <label className="mb-2 text-base block">Country</label>
-                <input
+                name="card_number"
                   type="text"
-                  placeholder="Egypt"
-                  disabled
+                  value={order_info.payment.card_number}
+                  onChange={handleChange}
+                  placeholder="2321-3123-1233-0111"
                   className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
                 />
-              </div>
-    
-              <div className="flex md:flex-row flex-col md:space-x-3">
-                <div className="w-full">
-                  <label className="mb-2 text-base block">First Name</label>
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                  />
-                </div>
-                <div className="w-full">
-                  <label className="mb-2 text-base block">Last Name</label>
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                  />
-                </div>
-              </div>
-    
-              <div className="w-full">
-                <label className="mb-2 text-base block">Address</label>
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                />
-              </div>
-    
-              <div className="w-full">
-                <label className="mb-2 text-base block">Apartment or Suite</label>
-                <input
-                  type="text"
-                  placeholder="Apartment, Suite, etc."
-                  className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                />
-              </div>
-    
-              <div>
-                <label className="mb-2 text-base block">Governorate</label>
-                <select className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500">
-                  <option value="">Select Governorate</option>
-                  {governorates.map((governorate, index) => (
-                    <option key={index} value={governorate}>
-                      {governorate}
-                    </option>
-                  ))}
-                </select>
-              </div>
-    
-              <div className="w-full">
-                <label className="mb-2 text-base block">Phone</label>
-                <input
-                  type="text"
-                  placeholder="+20"
-                  className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                />
-              </div>
-    
-              <h1 className="mt-5 mb-3 text-2xl font-sans font-bold">Payment Method</h1>
-    
-              <div className="border-1 flex flex-row gap-1 border-black px-2 py-2">
-                <input type="radio" name="payment-type" />{" "}
-                <h1>Cash On Delivery (COD)</h1>
-              </div>
-    
-              <div
-                className={`border-1 mb-10 border-black ${
-                  paypal ? "bg-gray-200" : "bg-white"
-                } ${paypal ? "border-b-1" : ""} px-2 py-2 rounded-md`}
-              >
-                <div className="flex flex-row gap-1 items-center">
-                  <input
-                    onClick={() => {
-                      set_paypal(!paypal);
-                    }}
-                    type="radio"
-                    name="payment-type"
-                  />{" "}
-                  <h1 className="flex flex-row items-center font-sans text-lg gap-3">
-                    Credit Card <MdOutlinePayment />
-                  </h1>
-                </div>
-    
-                {paypal && (
-                  <div className="w-full mt-3">
-                    <hr />
-                    <label className="mb-2 text-base block">Card Number</label>
+                <div className="flex space-x-3">
+                  <div className="w-1/2">
+                    <label className="mb-2 text-base block">Expiration Date</label>
                     <input
+                      value={order_info.payment.expiration_date}
+                      onChange={handleChange}
                       type="text"
-                      placeholder="2321-3123-1233-0111"
+                      name="expiration_date"
+                      placeholder="03/27"
                       className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
                     />
-                    <div className="flex space-x-3">
-                      <div className="w-1/2">
-                        <label className="mb-2 text-base block">Expiration Date</label>
-                        <input
-                          type="text"
-                          placeholder="03/27"
-                          className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                        />
-                      </div>
-                      <div className="w-1/2">
-                        <label className="mb-2 text-base block">Security Code</label>
-                        <input
-                          type="text"
-                          placeholder="231"
-                          className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
-                        />
-                      </div>
-                    </div>
                   </div>
-                )}
+                  <div className="w-1/2">
+                    <label className="mb-2 text-base block">Security Code</label>
+                    <input
+                    onChange={handleChange}
+                    value={order_info.payment.security_code}
+                      type="text"
+                      name="security_code"
+                      placeholder="231"
+                      className="mb-3 px-4 py-2 text-base rounded-md bg-white border border-gray-400 w-full outline-blue-500"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            <div className="md:hidden  flex flex-col">
-    {order.map((product)=>{
-      return(
-        <div className="flex mb-5 border-b-2 shadow-md border-black rounded-lg p-3 flex-row items-center justify-between gap-2" key={product.productID}>
-         <div className="">
-          <img className="w-14 rounded-md" src={product.image}/>
-          <h1 className="mt-3 font-sans font-semibold text-md">{product.title}</h1>
+            )}
           </div>
-          <h1 className="font-sans">{product.price} EGP</h1>
-         
-          </div>
-      )
-    })}
-    <div className="flex flex-row mb-2 items-center justify-between ">
-  <h1>Subtotal</h1>
-  <h1 className="font-bold font-sans text-lg">{sum}.00 EGP</h1>
+        </div>
+        
+ <div  className="md:hidden  flex flex-col">
+{items.map((product)=>{
+  return(
+    <div key={product.productID} className="flex mb-5 border-b-2 shadow-md border-black rounded-lg p-3 flex-row items-center justify-between gap-2" key={product.productID}>
+     <div className="">
+      <img className="w-14 rounded-md" src={product.image}/>
+      <h1 className="mt-3 font-sans font-semibold text-md">{product.title}</h1>
+      </div>
+      <h1 className="font-sans">{product.price} EGP</h1>
+     
+      </div>
+  )
+})}
+<div className="flex flex-row mb-2 items-center justify-between ">
+<h1>Subtotal</h1>
+<h1 className="font-bold font-sans text-lg">{sum}.00 EGP</h1>
 </div>
 <div className="flex  flex-row mb-3 items-center justify-between">
-  <h1 className="font-sans">Shipping</h1>
-  <h1 className="font-bold font-sans text-lg">FREE</h1>
+<h1 className="font-sans">Shipping</h1>
+<h1 className="font-bold font-sans text-green-700 text-lg">FREE</h1>
 </div>
 <div className="flex mb-5  flex-row items-center justify-between">
-  <h1 className="font-bold text-2xl font-sans">Total</h1>
+<h1 className="font-bold text-2xl font-sans">Total</h1>
 <h1 className="font-bold text-xl font-sans">{sum} EGP</h1>
 </div>
 </div>
-            <button
-              type="submit"
-              className="bg-green-700 font-sans font-semibold hover:bg-green-900 px-3 py-2  focus:outline-blue-700 mb-8 uppercase rounded-sm text-white w-full"
-            >
-              Pay Now
-            </button>
-          </form>
-        </div>
-        
+        <button
+          type="submit"
+          className="bg-green-700 font-sans font-semibold hover:bg-green-900 px-3 py-2  focus:outline-blue-700 mb-12 uppercase rounded-sm text-white w-full"
+        >
+          Pay Now
+        </button>
+      </form>
+    </div>
     
-        {/* Right Section: Order Summary */}
-        <div className="md:w-1/2 w-full hidden md:flex mt-9 mb-4 ml-12 items-center md:justify-center">
-          <div className="flex flex-col gap-3">
-            {order.map((product) => {
-              return (
-                <div
-                  className="flex items-center border-b-2 shadow-md shadow-t-lg p-5 rounded-lg border-black justify-between space-x-2"
-                  key={product.productID}
-                >
-                  <div className="relative">
-                    <img
-                      src={product.image}
-                      className="w-12 bg-gray-600 object-cover"
-                      alt={product.title}
-                    />
-                    <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-black text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
-                      {product.quantity}
-                    </span>
-                  </div>
-                  <h1 className="text-md font-sans tracking-tight font-semibold leading-tight">
-                    {product.title}
-                  </h1>
-                  <h1 className="pl-5 font-sans">{product.price} EGP</h1>
-                </div>
-              );
-            })}
-            <div className="md:flex flex-row items-center md:justify-between hidden">
-              <h1>Subtotal</h1>
-              <h1 className="font-bold font-sans text-lg">{sum}.00 EGP</h1>
-            </div>
-            <div className="md:flex hidden flex-row items-center md:justify-between">
-              <h1 className="font-sans">Shipping</h1>
-              <h1 className="font-bold font-sans text-lg">FREE</h1>
-            </div>
-            <div className="md:flex hidden flex-row items-center md:justify-between">
-              <h1 className="font-bold text-2xl font-sans">Total</h1>
-              <h1 className="font-bold text-xl font-sans">{sum} EGP</h1>
-            </div>
-          </div>
-        </div>
 
-        
+    {/* Right Section: Order Summary */}
+    <div className="md:w-1/2 w-full hidden md:flex mt-9 mb-4 ml-12 items-center md:justify-center">
+      <div className="flex flex-col gap-3">
+        {items.map((product) => {
+          return (
+            <div
+              className="flex items-center border-b-2 shadow-l-lg shadow-md shadow-b-lg p-5 rounded-lg border-black justify-between space-x-2"
+              key={product.productID}
+            >
+              <div className="relative">
+                <img
+                  src={product.image}
+                  className="w-12 bg-gray-600 object-cover"
+                  alt={product.title}
+                />
+                <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-black text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
+                  {product.quantity}
+                </span>
+              </div>
+              <h1 className="text-md font-sans tracking-tight font-semibold leading-tight">
+                {product.title}
+              </h1>
+              <h1 className="pl-5 font-sans">{product.price} EGP</h1>
+            </div>
+          );
+        })}
+        <div className="md:flex flex-row items-center md:justify-between hidden">
+          <h1>Subtotal</h1>
+          <h1 className="font-bold font-sans text-lg">{sum}.00 EGP</h1>
+        </div>
+        <div className="md:flex hidden flex-row items-center md:justify-between">
+          <h1 className="font-sans">Shipping</h1>
+          <h1 className="font-bold font-sans text-lg">FREE</h1>
+        </div>
+        <div className="md:flex hidden flex-row items-center md:justify-between">
+          <h1 className="font-bold text-2xl font-sans">Total</h1>
+          <h1 className="font-bold text-xl font-sans">{sum} EGP</h1>
+        </div>
       </div>
+    </div>
+
+    
+  </div>)}
+      </div>
+  
     );
     
 }

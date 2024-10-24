@@ -19,8 +19,8 @@ export function DecodeJWT(token) {
           .join('')
       );
       const decoded = JSON.parse(jsonPayload);
-      console.log('Decoded JWT:', decoded);
-      return decoded.email || null;  
+     
+      return decoded || null;  
     } catch (err) {
   console.log(err)
     }

@@ -30,7 +30,7 @@ useEffect(()=>{
        
   return (
    
-    <div key={product.ProductID}>
+    <div key={product.productId}>
    
     {product.quantity>0?<div className="flex gap-2 flex-col ">
       
@@ -45,9 +45,9 @@ useEffect(()=>{
   
   <h1 className="pb-3 font-serif font-semibold">Total Price: <span className="font-thin font-sans">{product.price*product.quantity} L.E</span></h1>
   <div className="flex items-center border-2 border-black px-6 py-1 gap-3 md:gap-5"> 
-    <button onClick={() => { addtocart(product.ProductID, product.price, product.image) }} className="font-bold font-serif text-sm md:text-lg">+</button>
+    <button onClick={() => { addtocart(product.productId, product.price, product.image) }} className="font-bold font-serif text-sm md:text-lg">+</button>
     <h1 className="font-bold text-sm md:text-lg">{product.quantity}</h1>
-    <button onClick={() => { RemovefromCart(product.ProductID, product.quantity) }} className="font-bold font-serif text-sm md:text-lg">-</button>
+    <button onClick={() => { RemovefromCart(product.productId, product.quantity) }} className="font-bold font-serif text-sm md:text-lg">-</button>
   </div>
 </div>
       

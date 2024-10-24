@@ -18,11 +18,11 @@ function App() {
   const [cartMenu,set_cartMenu]=useState(false);
   const [cart,set_cart]=useState(()=>{return JSON.parse(localStorage.getItem('cart'))||[]});
   const RemovefromCart=useCallback((_id)=>{
-    const existingProd=cart.find((product)=>product.ProductID===_id)
+    const existingProd=cart.find((product)=>product.productId===_id)
    if(existingProd){
     set_cart(prev=>{
       return prev.map((product)=>{
-    if(product.ProductID===_id){
+    if(product.productId===_id){
       const newCartQuantity=product.quantity-1;
       if(newCartQuantity>0){
         return{...product,quantity:newCartQuantity}
@@ -40,15 +40,15 @@ function App() {
 
   },[cart])
   const addtocart= useCallback((_id,price,title,image)=>{
-    const existingProd=cart.find((product)=>product.ProductID===_id)
+    const existingProd=cart.find((product)=>product.productId===_id)
     if(!existingProd){
       set_cartMenu(true)
-      set_cart(prev=>[...prev,{ProductID:_id,quantity:1,price:price,title:title,image}])
+      set_cart(prev=>[...prev,{productId:_id,quantity:1,price:price,title:title,image}])
     }
       else{
       set_cart(prev=>{
         return prev.map(product=>{
-        if(product.ProductID===_id){
+        if(product.productId===_id){
           set_cartMenu(true)
          return {...product,quantity:product.quantity+1}
           }

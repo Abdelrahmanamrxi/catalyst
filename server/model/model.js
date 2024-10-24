@@ -32,9 +32,35 @@ const user=mongoose.Schema({
     ,updatedAt: { type: Date } 
 })
 const order=mongoose.Schema({
+    email: { 
+        type: String,
+        required: true
+    },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
+        required:true
+    },
+    phone:{
+        type:String,
+        required:true
+    },
+    state:{
+        type:String,
+        enum:[
+            "Cairo", "Alexandria", "Giza", "Dakahlia", "Red Sea", "Beheira", "Fayoum",
+            "Gharbia", "Ismailia", "Monufia", "Minya", "Qaliubiya", "New Valley", 
+            "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharkia", 
+            "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", 
+            "Sohag"],
+            required:true
+
+    },
+    country:{type:String,enum:['Egypt'],default:"Egypt"},
+    first_name:{type:String,required:true},
+    last_name:{type:String,required:true},
+    address:{
+        type:String,
         required:true
     },
     items:[{
@@ -65,6 +91,27 @@ const order=mongoose.Schema({
 
 
     }
+    ,payment_type:{
+        type:String,
+        enum:['COD','credit'],
+        default:'COD'
+    }
+    ,payment:{
+        card_number:{
+            type:String,
+        }
+        ,expiration_date:{
+            type:String,
+        }
+        ,
+        security_code:{
+            type:String
+        }
+    }
+    ,Total_Price:{
+        type:Number,
+        required:true
+    }
    
 })
 
@@ -76,4 +123,5 @@ user.pre('save',function(next){
 })
 const Product=mongoose.model('Product',product)
 const User=mongoose.model('User',user)
-module.exports={Product,User}
+const Order=mongoose.model('Order',order)
+module.exports={Product,User,Order}
