@@ -3,6 +3,11 @@ export function Logout(navigate){
     localStorage.removeItem('Token')
     navigate('/')
 }
+export const ScrollTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' }); 
+};
+
+
 export function DecodeJWT(token) {
     try {
       if (!token) {

@@ -7,9 +7,10 @@ import  img from '../assets/check.png'
 import { CartContext } from "../App";
 import { useContext } from "react";
 import  axios from 'axios'
-import ScrollTop from "../utility/ScrollTop";
-import { useCallback } from "react";
 
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { ScrollTop} from "../utility/functions";
 export default function Checkout() {
 
   const [paypal,set_paypal]=useState(false)
@@ -17,11 +18,13 @@ export default function Checkout() {
   const[message_success,set_message]=useState('')
   const location=useLocation();
   const {set_cart}=useContext(CartContext)
+  const navigate=useNavigate()
   
   const token=localStorage.getItem('Token')
   const value=DecodeJWT(token)
   const userId=value.userId
   const sum=location.state.sum
+  
     const items=JSON.parse(localStorage.getItem('cart'))
     const [order_info,set_order]=useState({
       userId,
@@ -57,6 +60,7 @@ export default function Checkout() {
 
     const handleSubmit =useCallback(async(e)=>{
       e.preventDefault()
+      ScrollTop()
       
       let orderData={...order_info}
       delete orderData.items.image
@@ -79,6 +83,15 @@ export default function Checkout() {
       }
 
     },[order_info,set_cart])
+
+    useEffect(()=>{
+      if(message_success){
+      const timer=setTimeout(()=>{
+        navigate('/')
+      },1000)
+      return ()=>clearTimeout(timer)
+    }
+    },[message_success,navigate])
  
     const governorates = [
         "Cairo", "Alexandria", "Giza", "Dakahlia", "Red Sea", "Beheira", "Fayoum",
@@ -90,12 +103,13 @@ export default function Checkout() {
     return (
       <div>
       {message_success?(
-        <div className="flex justify-center flex-col items-center text-xl md:text-2xl mt-10">
-          <h1 className="text-3xl font-sans font-bold mb-10">Checkout</h1>
+        <div  className="flex justify-center p-3 flex-col items-center  mt-10">
+          <h1 className="text-3xl font-sans font-bold mb-5">Checkout</h1>
           <div className="flex   gap-2 flex-row items-center ">
-        <h1 className="font-bold text-green-600">Your Order has been placed </h1>
+        <h1 className="font-bold text-xl md:text-2xl text-green-600">Your Order has been placed </h1>
         <img className="w-9" src={img}/>
         </div>
+        <h1 className="text-md  mt-5 font-bold">An email has been sent to you with details of your order.</h1>
         </div>
         ):(<div className="m-5 md:flex md:flex-row h-screen">
     

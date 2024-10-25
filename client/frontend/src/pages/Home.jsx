@@ -36,7 +36,7 @@ export default function Home() {
     <div className='absolute  inset-0 flex flex-col items-center justify-center m-2'><h1 className='sm:text-2xl text-xl tracking-wide  p-3 leading-loose  font-bold  text-white'>Elevate your style with timeless pieces that speak sophistication and comfort
       </h1>
       
-    <Link to='/shop'>  <button className='bg-transparent border-white border font-bold hover:border-none  hover:bg-black text-white font-white rounded-sm  h-8 mt-3 px-16 uppercase'>Shop</button>
+    <Link to='/shop'>  <button className='bg-transparent border-white border font-bold hover:border-none  hover:bg-black text-white font-white rounded-sm h-8 mt-3 px-16 py-2 uppercase'>Shop</button>
     </Link>
       
     
