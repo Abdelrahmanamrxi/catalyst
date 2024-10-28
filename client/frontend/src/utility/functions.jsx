@@ -1,4 +1,4 @@
-
+import { jwtDecode } from 'jwt-decode'
 export function Logout(navigate){
     localStorage.removeItem('Token')
     navigate('/')
@@ -29,5 +29,28 @@ export function DecodeJWT(token) {
     } catch (err) {
   console.log(err)
     }
+  }
+  export function CheckToken(token,navigate){
+    try{
+    if(!token) return false;
+    
+    else{
+      const decoded=jwtDecode(token)
+      const current_time=Date.now()/1000
+    if(decoded.exp<current_time){
+      Logout(navigate)
+      return false;
+    }
+    else{
+      return true;
+    }
+    }
+  }
+  catch(err){
+    console.log('INVALID TOKEN',token)
+    Logout(navigate)
+    return false
+  }
+
   }
   

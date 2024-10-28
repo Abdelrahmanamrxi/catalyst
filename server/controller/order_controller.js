@@ -3,6 +3,7 @@ require('dotenv').config()
 const {createError}=require('./errors')
 const {Order}=require('../model/model')
 const nodemailer=require('nodemailer')
+
 const transporter=nodemailer.createTransport({
     service:'gmail',
     auth:{
@@ -48,7 +49,7 @@ const Checkout=async(req,res,next)=>{
             Total_Price,
             items: items.map((item) => {
                 return {
-                    productId: item.productId, // Ensure this matches your schema
+                    productId: item.productId, 
                     quantity: item.quantity,
                     price: item.price
                 };

@@ -1,10 +1,11 @@
 
 import {Link} from 'react-router-dom'
 import {memo} from 'react'
+import { useNavigate } from 'react-router-dom'
 
 
  function Product_Card({id,image,discount,title,price,rating,_id,cart,addtocart}) {
-  
+  const navigate=useNavigate()
  
    return(
     <div key={id} className="relative w-full flex justify-center flex-col overflow-hidden rounded-lg border  border-gray-100 bg-white shadow-md">
@@ -33,9 +34,9 @@ import {memo} from 'react'
     
     <button
    
-     onClick={()=>{addtocart(_id,price,title,image)}
+     onClick={()=>{navigate(`/${_id}`)}}
      
-    }
+    
       className="flex items-center justify-center rounded-md bg-black px-4 sm:px-5 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
     >
       <svg

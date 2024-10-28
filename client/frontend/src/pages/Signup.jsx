@@ -26,7 +26,6 @@ function Signup() {
       set_error('')
       const endpoint = isSignUp ? "http://localhost:5000/api/users" : "http://localhost:5000/api/users/login"
       const response = await axios.post(endpoint, { email, password })
-
       const token = response.data.token
       if (token) {
         localStorage.setItem('Token', token)
@@ -38,7 +37,6 @@ function Signup() {
       }
     }
     catch (err) {
-      console.log(err)
       set_error(err.response.data.msg)
     }
   }

@@ -281,10 +281,14 @@ export default function Checkout() {
  <div  className="md:hidden  flex flex-col">
 {items.map((product)=>{
   return(
-    <div key={product.productID} className="flex mb-5 border-b-2 shadow-md border-black rounded-lg p-3 flex-row items-center justify-between gap-2" key={product.productID}>
-     <div className="">
+    <div key={product.productID} className="flex mb-5  shadow-lg border-2 rounded-lg p-3 flex-row items-center justify-between gap-2" key={product.productID}>
+     <div className="relative">
       <img className="w-14 rounded-md" src={product.image}/>
+       <span className="absolute top-0 left-0 mr-4 bg-black text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
+                  {product.quantity}
+                </span>
       <h1 className="mt-3 font-sans font-semibold text-md">{product.title}</h1>
+      <h1 className=" mt-2 font-bold font-sans text-lg"> Size: <span className="font-semibold">{product.size}</span></h1>
       </div>
       <h1 className="font-sans">{product.price} EGP</h1>
      
@@ -316,11 +320,11 @@ export default function Checkout() {
 
     {/* Right Section: Order Summary */}
     <div className="md:w-1/2 w-full hidden md:flex mt-9 mb-4 ml-12 items-center md:justify-center">
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col  gap-3">
         {items.map((product) => {
           return (
             <div
-              className="flex items-center border-b-2 shadow-l-lg shadow-md shadow-b-lg p-5 rounded-lg border-black justify-between space-x-2"
+              className="flex items-center border-2  shadow-md p-5 rounded-lg border-gray-100 justify-between space-x-2"
               key={product.productID}
             >
               <div className="relative">
@@ -332,11 +336,15 @@ export default function Checkout() {
                 <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-black text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
                   {product.quantity}
                 </span>
+                <h1 className=" mt-2 font-bold font-sans text-lg"> Size: <span className="font-semibold">{product.size}</span></h1>
               </div>
               <h1 className="text-md font-sans tracking-tight font-semibold leading-tight">
                 {product.title}
               </h1>
+             
               <h1 className="pl-5 font-sans">{product.price} EGP</h1>
+             
+           
             </div>
           );
         })}

@@ -5,13 +5,34 @@ import { CartContext } from "../App"
 import Loading from '../layout/Loading'
 
 export default function Product(){
-  
+    const [selected_size,set_selected]=useState('')
+    const[message,set_message]=useState('')
+    const [isDisabled, setIsDisabled] = useState(false);
     const[product,set_product]=useState({})
     const{id}=useParams()
     const[loader,set_loader]=useState(false)
-
+    const sizes=['XS','S','M','L','XL']
     const {addtocart}=useContext(CartContext)
-  
+
+    
+  function handleClick(_id,price,title,image){
+    if(!selected_size){
+      set_message('Please choose a size')
+      setIsDisabled(true)
+      return;
+    }
+
+   if(selected_size){
+      set_message('')
+     addtocart(_id,price,title,image, selected_size);
+      setIsDisabled(false);
+   }
+  }
+  const handleSize = (e) => {
+    set_selected(e.target.value); 
+    setIsDisabled(false); 
+    set_message(''); 
+};
     useEffect(()=>{
      async function getProduct() {
       try{
@@ -30,8 +51,8 @@ export default function Product(){
     return(
       <div>
 {loader?(<Loading/>):(<div className="flex items-center justify-center">
-  <div key={product._id} className="relative md:w-2/3 lg:w-2/3 mt-10  flex flex-col lg:flex-row items-center justify-center overflow-hidden sm:rounded-lg sm:border sm:border-gray-100 bg-white sm:shadow-md">
-    <img className="object-cover w-1/2 sm:w-1/2  sm:p-3" src={product.image} alt="product image" />
+  <div key={product._id} className="relative mb-32 md:w-2/3 lg:w-2/3 mt-10  flex flex-col lg:flex-row items-center justify-center overflow-hidden sm:rounded-lg sm:border sm:border-gray-100 bg-white sm:shadow-md">
+    <img className="object-cover w-1/2 sm:w-1/3  sm:p-3" src={product.image} alt="product image" />
 
     {product.discount && (
       <span className="absolute top-0 left-0 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
@@ -41,7 +62,7 @@ export default function Product(){
 
     <div className="mt-3 px-4 pb-4 min-h-[160px] sm:min-h-[180px] md:min-h-[220px] flex flex-col justify-between">
       <a href="#">
-        <h5 className="text-2xl sm:text-3xl sm:mb-5 tracking-tight font-bold text-slate-900">
+        <h5 className="text-2xl sm:text-3xl sm:mb-5 tracking-tight font-serif font-bold black">
           {product.title}
         </h5>
         <h3 className='capitalize leading-loose font-serif tracking-wider'>{product.description}</h3>
@@ -49,14 +70,32 @@ export default function Product(){
 
       <div className="mt-2 mb-5 flex flex-row items-center justify-between">
         <p className="mr-4">
-          <span className="text-xl sm:text-2xl font-bold text-slate-900">{product.price} EGP</span>
+          <span className="text-xl sm:text-2xl font-bold font-serif ">{product.price} EGP</span>
         </p>
        
       </div>
+      {(product.category==="men's clothing"|| product.category==="women's clothing")?(
+        <div>
+        <h1 className='font-bold text-lg font-serif'>Sizes</h1>
+        <div className='flex flex-row gap-2 items-center mt-5'>
+        {sizes.map((size)=>{
+         return (
+            <label key={size} className='flex  items-center cursor-pointer'>
+            <input  checked={selected_size===size} onChange={(e)=>{handleSize(e)}}type='radio' className='sr-only peer' value={size}/>
+            <span className={`border-2 border-black px-4 py-1 hover:bg-black hover:text-white font-bold text-black ${selected_size==size?'bg-black text-white':''}`}>{size}</span>
+            </label>
+       
+          )
+        })}
 
-      <a
-        href="#"
-      onClick={()=>{addtocart(product._id,product.price,product.title,product.image)}}
+        </div>
+        </div>
+       
+      ):''}
+  {message?<h1 className='text-red-800 font-semibold mt-5 text-lg'>{message}</h1>:''}
+      <button
+       disabled={isDisabled}
+      onClick={()=>{handleClick(product._id,product.price,product.title,product.image)}}
         className="flex items-center justify-center mt-5 rounded-md bg-black px-4 sm:px-5 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
       >
         <svg
@@ -74,7 +113,7 @@ export default function Product(){
           />
         </svg>
         Add to cart
-      </a>
+      </button>
     </div>
   </div>
 </div>)}

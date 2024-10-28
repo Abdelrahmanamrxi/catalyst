@@ -1,5 +1,5 @@
 import './App.css'
-import {Route,Routes,BrowserRouter} from 'react-router-dom'
+import {Route,Routes,BrowserRouter,useNavigate} from 'react-router-dom'
 import Layout from "./layout/Layout"
 import Home from "./pages/Home"
 import Signup from './pages/Signup'
@@ -7,6 +7,7 @@ import Profile from './pages/Profile'
 import Loading from './layout/Loading'
 import { Suspense, useState,createContext,lazy,useMemo, useEffect, useCallback  } from 'react'
 import Checkout from './pages/Checkout'
+
 export const CartContext=createContext({cart:[],set_cart:()=>{}});
 
 const Product=lazy(()=>import('./pages/Product'))
@@ -15,14 +16,15 @@ const ScrollTop =lazy(()=>import('./utility/ScrollTop'))
 
 
 function App() {
+ 
   const [cartMenu,set_cartMenu]=useState(false);
   const [cart,set_cart]=useState(()=>{return JSON.parse(localStorage.getItem('cart'))||[]});
-  const RemovefromCart=useCallback((_id)=>{
-    const existingProd=cart.find((product)=>product.productId===_id)
+  const RemovefromCart=useCallback((_id,size)=>{
+    const existingProd=cart.find((product)=>product.productId===_id&&product.size===size)
    if(existingProd){
     set_cart(prev=>{
       return prev.map((product)=>{
-    if(product.productId===_id){
+    if(product.productId===_id&&product.size===size){
       const newCartQuantity=product.quantity-1;
       if(newCartQuantity>0){
         return{...product,quantity:newCartQuantity}
@@ -39,16 +41,16 @@ function App() {
    }
 
   },[cart])
-  const addtocart= useCallback((_id,price,title,image)=>{
-    const existingProd=cart.find((product)=>product.productId===_id)
+  const addtocart= useCallback((_id,price,title,image,size)=>{
+    const existingProd=cart.find((product)=>product.productId===_id&&product.size===size)
     if(!existingProd){
       set_cartMenu(true)
-      set_cart(prev=>[...prev,{productId:_id,quantity:1,price:price,title:title,image}])
+      set_cart(prev=>[...prev,{productId:_id,quantity:1,price:price,title:title,image,size}])
     }
       else{
       set_cart(prev=>{
         return prev.map(product=>{
-        if(product.productId===_id){
+        if(product.productId===_id&&product.size===size){
           set_cartMenu(true)
          return {...product,quantity:product.quantity+1}
           }
@@ -62,6 +64,7 @@ function App() {
   }
 
   },[cart])
+
 useEffect(()=>{
   localStorage.setItem('cart',JSON.stringify(cart))
  

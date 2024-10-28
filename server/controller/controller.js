@@ -5,6 +5,7 @@ const jwt=require('jsonwebtoken')
 require('dotenv').config()
 const bcrypt=require('bcrypt')
 
+
 const getProducts=async(req,res)=>{
   const query_object={}
     try{
@@ -38,15 +39,17 @@ const getProduct=async(req,res,next)=>{
 }
 const createUser=async(req,res,next)=>{
   const{email,password}=req.body
+
  
   try{
     if(password.length<7){
       return res.status(401).json({msg:'Password must be longer than 7 characters.'})
     }
     const hashed_password=await bcrypt.hash(password,10)
-    const new_user=new User({email,password:hashed_password})
+    const new_user=new User({email:email,password:hashed_password})
     await new_user.save()
     const token=jwt.sign({userId:new_user._id},process.env.JWT_SECRET,{expiresIn:'24h'})
+
     res.status(200).json({msg:'You have succesfully created your account',token})
   }
   catch(err){
@@ -55,6 +58,7 @@ const createUser=async(req,res,next)=>{
 
 }
 const login = async (req, res, next) => {
+
   const { email, password } = req.body; 
 
   try {
