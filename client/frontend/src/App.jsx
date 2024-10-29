@@ -95,22 +95,26 @@ useEffect(()=>{
         
         }/>
        
-      
-      <Route path={`/:id`} element={
+      <Route path={`:id`} element={
       
         <Product/>
        
         }/>
-      <Route path="/shop" element={
+       
+       <Route path="/shop" element={
         <Shop/>
       
         
         }/>
+      
       <Route path={`/shop/:id`} element={
         <Product/>
       }
 
         />
+        
+        
+       
    
       <Route path='/signup' element={<Signup/>}/>
       <Route path="/profile" element={<Profile/>}/>

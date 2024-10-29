@@ -2,18 +2,23 @@ import Product_Card from "../utility/Product_Card"
 import axios from 'axios'
 import { useEffect,useState,useContext } from "react"
 import Loading from "../layout/Loading"
-
+import { useNavigate,useSearchParams } from "react-router-dom"
 import img from '../assets/right.png'
 import { CartContext } from "../App"
 
 export default function Shop(){
     const {cart,addtocart}=useContext(CartContext)
     const [all_products,set_products]=useState([])
-    const [currentPage,set_current]=useState(1)
+    const [searchParams,set_search]=useSearchParams()
+    const [currentPage,set_current]=useState(parseInt(searchParams.get('page'))||1)
     const [total_pages,set_total]=useState(0)
     const [loader,set_loading]=useState(false)
+  
+    const navigate=useNavigate()
+   
     
-
+    
+  
     const getProducts=async()=>{
     try{
     set_loading(true)
@@ -26,11 +31,13 @@ export default function Shop(){
     catch(err){
         console.log(err)
     }
-    
+   
 }
 useEffect(()=>{
+
 getProducts()
 window.scrollTo(0,0)
+navigate(`/shop?page=${currentPage}`)
 
 },[currentPage])
    
@@ -57,7 +64,7 @@ window.scrollTo(0,0)
     <div className=" mt-5  grid items-start gap-3  grid-cols-2  sm:grid-cols-3">
        
       {all_products.map((product)=>{
-       return <Product_Card cart={cart} addtocart={addtocart} key={product.id} {...product}/>
+       return <Product_Card cart={cart} currentPage={currentPage} addtocart={addtocart} key={product.id} {...product}/>
       })}
     
     </div>
@@ -69,6 +76,7 @@ window.scrollTo(0,0)
 
     </div>
     </div>)}
+    
     </div>
     )
 }

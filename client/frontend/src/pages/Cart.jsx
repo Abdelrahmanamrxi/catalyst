@@ -38,7 +38,7 @@ else{
       
     <div>
       {cart&&cart.length>0?( cart.map((product)=>{
-       console.log(product.category)
+      
   return (
    
     <div key={`${product.productId}-${product.size}`}>

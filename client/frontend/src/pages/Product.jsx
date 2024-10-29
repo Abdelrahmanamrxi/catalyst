@@ -1,8 +1,10 @@
 import{useState,useEffect,useContext} from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams,Link, useLocation } from 'react-router-dom'
 import axios  from 'axios'
 import { CartContext } from "../App"
 import Loading from '../layout/Loading'
+import { IoMdArrowRoundBack } from "react-icons/io"
+
 
 export default function Product(){
     const [selected_size,set_selected]=useState('')
@@ -11,9 +13,13 @@ export default function Product(){
     const[product,set_product]=useState({})
     const{id}=useParams()
     const[loader,set_loader]=useState(false)
-    const sizes=['XS','S','M','L','XL']
-    const {addtocart}=useContext(CartContext)
 
+    const {addtocart}=useContext(CartContext)
+    const navigate=useNavigate()
+    const location=useLocation()
+    console.log(location)
+
+    const sizes=['XS','S','M','L','XL']
     
   function handleClick(_id,price,title,image,category){
     if(!selected_size&&category!="jewelery"){
@@ -28,6 +34,7 @@ export default function Product(){
       setIsDisabled(false);
    }
   }
+
   const handleSize = (e) => {
     set_selected(e.target.value); 
     setIsDisabled(false); 
@@ -48,9 +55,20 @@ export default function Product(){
      getProduct()
     },[])
   
+    const handleBack = () => {
+      const path = location.state?.from ? `${location.state.from}${location.search || ''}` : -1;
+      navigate(path);
+    };
     return(
       <div>
-{loader?(<Loading/>):(<div className="flex items-center justify-center">
+{loader?(<Loading/>):(
+ <div>
+ 
+  <div onClick={handleBack} className='m-5 hover:underline cursor-pointer flex gap-1 flex-row items-center justify-start'>
+    <h1><IoMdArrowRoundBack/></h1>
+    <h1 className='text-lg font-serif'>Back</h1>
+  </div>
+  <div className="flex items-center justify-center">
   <div key={product._id} className="relative mb-32 md:w-2/3 lg:w-2/3 mt-10  flex flex-col lg:flex-row items-center justify-center overflow-hidden sm:rounded-lg sm:border sm:border-gray-100 bg-white sm:shadow-md">
     <img className="object-cover w-1/2 sm:w-1/3  sm:p-3" src={product.image} alt="product image" />
 
@@ -116,7 +134,9 @@ export default function Product(){
       </button>
     </div>
   </div>
+</div>
 </div>)}
 </div>
+
     )
 }
