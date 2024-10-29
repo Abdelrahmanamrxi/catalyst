@@ -15,20 +15,30 @@ export default function Cart() {
     navigate('/checkout', { state: { sum:sum } });
   };
   
+  useEffect(()=>{
+    if(cart===null){
+      window.location.reload()
+    }
+  },[cart])
 useEffect(()=>{
+  if(cart){
   const total_price=cart.reduce((acc,product)=>{
   return acc+(product.quantity*product.price)
   },0)
   set_sum(total_price)
+}
+else{
+  set_sum(0)
+}
 },[cart])
-console.log(cart)
+
    
   return (
     <div>
       
     <div>
-       {cart.map((product)=>{
-       
+      {cart&&cart.length>0?( cart.map((product)=>{
+       console.log(product.category)
   return (
    
     <div key={`${product.productId}-${product.size}`}>
@@ -43,10 +53,10 @@ console.log(cart)
   <h1 className='text-md md:text-lg mt-2 leading-tightest tracking-tight md:text-md font-serif font-bold mb-2'>
     {product.title}
   </h1>
-  <h1 className="font-sans text-lg font-semibold ">Size: <span className="">{product.size}</span></h1>
+  {product.category==="jewelery"?'':<h1 className="font-sans text-lg font-semibold ">Size: <span className="">{product.size}</span></h1>}
   <h1 className="pb-3 font-serif font-semibold">Total Price: <span className="font-thin font-sans">{product.price*product.quantity} L.E</span></h1>
   <div className="flex items-center border-2 border-black px-6 py-1 gap-3 md:gap-5"> 
-    <button onClick={() => { addtocart(product.productId, product.price, product.image,product.size) }} className="font-bold font-serif text-sm md:text-lg">+</button>
+    <button onClick={() => { addtocart(product.productId, product.price, product.title,product.image,product.size) }} className="font-bold font-serif text-sm md:text-lg">+</button>
     <h1 className="font-bold text-sm md:text-lg">{product.quantity}</h1>
     <button onClick={() => { RemovefromCart(product.productId,product.size) }} className="font-bold font-serif text-sm md:text-lg">-</button>
   </div>
@@ -58,7 +68,7 @@ console.log(cart)
   
   )
 
-       })}
+       })):''}
        <div>
        <hr className="w-full border-black mt-3 border-t-2"/>
         <h1 className="font-serif font-bold mt-3 text-md md:text-xl"> Estimated Total: <span className=" pl-2 font-semibold font-sans">{sum}L.E</span></h1>

@@ -10,7 +10,7 @@ import { CartContext } from '../App'
 import Loading from '../layout/Loading'
 import { CheckToken } from '../utility/functions'
 export default function Home() {
- 
+  
   const[loading,set_loading]=useState(false)
  const {cart,addtocart}=useContext(CartContext)
   const [showcase_products,set_products]=useState([])
@@ -19,6 +19,7 @@ export default function Home() {
   useEffect(()=>{
     CheckToken(token,navigate)
   },[navigate,token])
+
   
   useEffect(()=>{
     async function ShowCase_Products(){

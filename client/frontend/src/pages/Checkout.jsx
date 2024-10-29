@@ -75,14 +75,19 @@ export default function Checkout() {
       const response=await axios.post('http://localhost:5000/api/orders',orderData)
       set_message("Your Order has been created succesfully")
       localStorage.removeItem('cart')
-      set_cart([])   
+       
       }
       catch(err){
        console.log(err)
-       set_error(err.response.data.msg)
+    if(err.response.data){
+    set_error(err.response.data.msg)
+       }
+       else{
+        set_error('An Unknown Error occured.')
+       }
       }
 
-    },[order_info,set_cart])
+    },[order_info])
 
     useEffect(()=>{
       if(message_success){
@@ -279,7 +284,7 @@ export default function Checkout() {
         </div>
         
  <div  className="md:hidden  flex flex-col">
-{items.map((product)=>{
+{items&&items.map((product)=>{
   return(
     <div key={product.productID} className="flex mb-5  shadow-lg border-2 rounded-lg p-3 flex-row items-center justify-between gap-2" key={product.productID}>
      <div className="relative">
@@ -321,7 +326,7 @@ export default function Checkout() {
     {/* Right Section: Order Summary */}
     <div className="md:w-1/2 w-full hidden md:flex mt-9 mb-4 ml-12 items-center md:justify-center">
       <div className="flex flex-col  gap-3">
-        {items.map((product) => {
+        {items&&items.map((product) => {
           return (
             <div
               className="flex items-center border-2  shadow-md p-5 rounded-lg border-gray-100 justify-between space-x-2"

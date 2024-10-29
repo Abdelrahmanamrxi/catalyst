@@ -41,11 +41,11 @@ function App() {
    }
 
   },[cart])
-  const addtocart= useCallback((_id,price,title,image,size)=>{
+  const addtocart= useCallback((_id,price,title,image,size,category)=>{
     const existingProd=cart.find((product)=>product.productId===_id&&product.size===size)
     if(!existingProd){
       set_cartMenu(true)
-      set_cart(prev=>[...prev,{productId:_id,quantity:1,price:price,title:title,image,size}])
+      set_cart(prev=>[...prev,{productId:_id,quantity:1,price:price,title:title,image,size,category}])
     }
       else{
       set_cart(prev=>{

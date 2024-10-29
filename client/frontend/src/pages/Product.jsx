@@ -15,16 +15,16 @@ export default function Product(){
     const {addtocart}=useContext(CartContext)
 
     
-  function handleClick(_id,price,title,image){
-    if(!selected_size){
+  function handleClick(_id,price,title,image,category){
+    if(!selected_size&&category!="jewelery"){
       set_message('Please choose a size')
       setIsDisabled(true)
       return;
     }
 
-   if(selected_size){
+   else{
       set_message('')
-     addtocart(_id,price,title,image, selected_size);
+     addtocart(_id,price,title,image, selected_size,category);
       setIsDisabled(false);
    }
   }
@@ -94,8 +94,8 @@ export default function Product(){
       ):''}
   {message?<h1 className='text-red-800 font-semibold mt-5 text-lg'>{message}</h1>:''}
       <button
-       disabled={isDisabled}
-      onClick={()=>{handleClick(product._id,product.price,product.title,product.image)}}
+       disabled={product.category==="jewelery"?false:isDisabled}
+      onClick={()=>{handleClick(product._id,product.price,product.title,product.image,product.category)}}
         className="flex items-center justify-center mt-5 rounded-md bg-black px-4 sm:px-5 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
       >
         <svg

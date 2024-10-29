@@ -13,7 +13,7 @@ const transporter=nodemailer.createTransport({
 })
 const Checkout=async(req,res,next)=>{
     try {
-        const { email, phone, address, payment_type, payment, state, apartment, country, Total_Price, items, userId, first_name, last_name } = req.body;
+        const { email, phone, address, payment_type, payment, state, apartment, country, Total_Price, items, userId, first_name, last_name ,size,category} = req.body;
         const { card_number, expiration_date, security_code } = payment;
       if(!email&&!address&&!state&&!payment_type&&!phone){
         return next(createError('Please fill in the whole required fields.'))
@@ -47,11 +47,13 @@ const Checkout=async(req,res,next)=>{
             apartment,
             country,
             Total_Price,
+            
             items: items.map((item) => {
                 return {
                     productId: item.productId, 
                     quantity: item.quantity,
-                    price: item.price
+                    price: item.price,
+                    size:items.size
                 };
             }),
             payment: payment_type === "credit" ? {
@@ -63,7 +65,7 @@ const Checkout=async(req,res,next)=>{
         });
        
     
-      
+      console.log(newOrder)
         const {TimeOfPurchase,_id} = await newOrder.save();
         const mailOptions={
             from:process.env.EMAIL_USER,
