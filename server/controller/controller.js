@@ -78,23 +78,7 @@ const login = async (req, res, next) => {
     return next(createError("Couldn't Log In", 500)); 
   }
 };
-const AuthUser= async(req,res,next)=>{
-  const authHeader=req.headers.authorization
-  if(authHeader){
-    const token=authHeader.split(' ')[1]
-    jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
-      if(err){
-        return next(createError("Couldn't Authenticate User"),403)
-      }
-      req.user=user
-      next()
-    })
-  }
-  else{
-    res.status(401).json({msg:"Error User Cannot be found."})
-  }
 
-}
 const getProfile=async(req,res,next)=>{
   try{
     const userId=req.user.userId
@@ -140,4 +124,4 @@ if(!current_password||!email){
   }
   
 }
-module.exports={getProducts,getProduct,createUser,login,AuthUser,getProfile,updatePassword}
+module.exports={getProducts,getProduct,createUser,login,getProfile,updatePassword}

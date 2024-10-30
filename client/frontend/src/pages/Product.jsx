@@ -7,6 +7,8 @@ import { IoMdArrowRoundBack } from "react-icons/io"
 
 
 export default function Product(){
+  const token=localStorage.getItem('Token')
+  
     const [selected_size,set_selected]=useState('')
     const[message,set_message]=useState('')
     const [isDisabled, setIsDisabled] = useState(false);
@@ -17,7 +19,7 @@ export default function Product(){
     const {addtocart}=useContext(CartContext)
     const navigate=useNavigate()
     const location=useLocation()
-    console.log(location)
+  
 
     const sizes=['XS','S','M','L','XL']
     

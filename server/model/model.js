@@ -12,6 +12,32 @@ const product=mongoose.Schema({
     }
     ,discount:String
 })
+const cart=mongoose.Schema({
+userId:{
+type:mongoose.Schema.Types.ObjectId,
+ref:'User',
+requied:true
+
+},
+items:[{
+productId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Product',
+    required:true
+}
+,quantity:{
+    type:Number,
+    required:true,
+    min:1
+},
+size:{
+    type:String,
+}
+
+}
+
+]})
+
 const user=mongoose.Schema({
     email:{
         type:String,
@@ -124,4 +150,5 @@ user.pre('save',function(next){
 const Product=mongoose.model('Product',product)
 const User=mongoose.model('User',user)
 const Order=mongoose.model('Order',order)
-module.exports={Product,User,Order}
+const Cart=mongoose.model('Cart',cart)
+module.exports={Product,User,Order,Cart}
