@@ -3,6 +3,8 @@ import img from '../assets/sign_page.jpg'
 import { useState, useEffect, memo } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
+import { useContext } from 'react'
+import { CartContext } from '../App'
 
 function Signup() {
 
@@ -13,6 +15,7 @@ function Signup() {
   const navigate = useNavigate()
   const [isSignUp, setIsSignUp] = useState(false)
   const [searchParam] = useSearchParams()
+  const {FetchCart}=useContext(CartContext)
   const error_message = searchParam.get('message') ? decodeURIComponent(searchParam.get('message')) : '';
   useEffect(() => {
     set_error(error_message)
@@ -31,6 +34,7 @@ function Signup() {
         localStorage.setItem('Token', token)
         set_message(response.data.msg)
         navigate('/')
+        await FetchCart(token)
       }
       else {
         set_error("Couldn't Create Your Account.")
@@ -43,6 +47,7 @@ function Signup() {
   function toggleView() {
     setIsSignUp(!isSignUp)
   }
+  
 
   return (
     <div className="flex flex-row min-h-screen md:h-[full]  relative">

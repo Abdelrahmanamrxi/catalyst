@@ -24,7 +24,7 @@ export function DecodeJWT(token) {
           .join('')
       );
       const decoded = JSON.parse(jsonPayload);
-     
+    
       return decoded || null;  
     } catch (err) {
   console.log(err)
@@ -53,4 +53,8 @@ export function DecodeJWT(token) {
   }
 
   }
+  export const handleBack = (navigate) => {
+    const path = location.state?.from ? `${location.state.from}${location.search || ''}` : -1;
+    navigate(path);
+  };
   

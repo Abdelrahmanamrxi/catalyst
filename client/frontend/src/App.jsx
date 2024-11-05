@@ -7,6 +7,8 @@ import Profile from './pages/Profile'
 import Loading from './layout/Loading'
 import { Suspense, useState,createContext,lazy,useMemo, useEffect, useCallback  } from 'react'
 import Checkout from './pages/Checkout'
+import axios from 'axios'
+import { DecodeJWT } from './utility/functions'
 
 export const CartContext=createContext({cart:[],set_cart:()=>{}});
 
@@ -18,7 +20,35 @@ const ScrollTop =lazy(()=>import('./utility/ScrollTop'))
 function App() {
  
   const [cartMenu,set_cartMenu]=useState(false);
-  const [cart,set_cart]=useState(()=>{return JSON.parse(localStorage.getItem('cart'))||[]});
+  const [cart,set_cart]=useState(()=>{
+const storedCart=localStorage.getItem('cart')
+if(storedCart){
+  try{
+    return JSON.parse(storedCart)
+  }
+  catch(err){
+    console.log(err)
+    return[]
+  }
+}
+
+  });
+  const FetchCart=async(token)=>{
+    const { userId } = DecodeJWT(token); // Decode the token to get userId
+    try {
+      const response = await axios.get('http://localhost:5000/api/cart', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        params: { userId },
+      });
+      set_cart(response.data);
+    } catch (err) {
+      console.log(err);
+    
+    }
+  };
+  
   const RemovefromCart=useCallback((_id,size)=>{
     const existingProd=cart.find((product)=>product.productId===_id&&product.size===size)
    if(existingProd){
@@ -63,14 +93,14 @@ function App() {
    
   }
 
-  },[cart])
+  },[cart,set_cart,set_cartMenu])
 
 useEffect(()=>{
   localStorage.setItem('cart',JSON.stringify(cart))
  
   
 },[cart])
-  const value=useMemo(()=>({cart,addtocart,RemovefromCart,cartMenu,set_cartMenu}),[cart,cartMenu,addtocart,RemovefromCart,set_cartMenu])
+  const value=useMemo(()=>({cart,addtocart,RemovefromCart,cartMenu,set_cartMenu,set_cart,FetchCart}),[cart,cartMenu,addtocart,RemovefromCart,set_cartMenu])
   
  
   return (
@@ -126,6 +156,6 @@ useEffect(()=>{
     </CartContext.Provider>
 
   )
-}
 
+}
 export default App

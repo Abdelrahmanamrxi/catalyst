@@ -21,13 +21,24 @@ export default function Checkout() {
   const navigate=useNavigate()
   
   const token=localStorage.getItem('Token')
-  const value=DecodeJWT(token)
-  const userId=value.userId
+ const CheckUser=()=>{
+  if(token){
+    const{userId}=DecodeJWT(token)
+    return userId
+  }
+  else{
+    return 'Guest'
+  }
+
+ }
+
+  
+  
   const sum=location.state.sum
   
     const items=JSON.parse(localStorage.getItem('cart'))
     const [order_info,set_order]=useState({
-      userId,
+      userId:CheckUser,
       email:'',
       country:'Egypt',
       first_name:'',

@@ -2,26 +2,83 @@ import {  useContext, useEffect } from "react"
 import { CartContext } from "../App"
 import { useState } from "react"
 import { Link ,useNavigate} from "react-router-dom"
+import axios from "axios"
+import { DecodeJWT } from "../utility/functions"
+import Loading from "../layout/Loading"
 
 export default function Cart() {
  
     const cart=JSON.parse(localStorage.getItem('cart'))
-   const {addtocart,RemovefromCart}=useContext(CartContext)
-   
+   const {addtocart,RemovefromCart,set_cart}=useContext(CartContext)
+   const [loading,set_loading]=useState(false)
    const [sum,set_sum]=useState(0)
-   const token=localStorage.getItem('Token')
    const navigate=useNavigate()
+   const token=localStorage.getItem('Token')
+
+
    const handleNavigate = () => {
     navigate('/checkout', { state: { sum:sum } });
   };
-  
+  const UpdateCart=async(productId,size)=>{
+    try{
+      
+      const {userId}=DecodeJWT(token)
+      set_loading(true)
+      const response=await axios.put('http://localhost:5000/api/cart/update',
+        {
+          userId:userId,
+          productId:productId,
+          size:size
+        },
+        {
+        headers:{
+        'Authorization':`Bearer ${token}`
+        }
+        
+      })
+      const {category,image,title,price}=response.data
+       addtocart(productId,price,title,image,size,category)
+      set_loading(false)
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+  const DeleteItem=async(productId,size)=>{
+    try{
+      set_loading(true)
+      const {userId}=DecodeJWT(token)
+      const response=await axios.put('http://localhost:5000/api/cart/delete',{
+      userId:userId,
+      productId:productId,
+      size:size
+    },
+    {headers:{
+      'Authorization':`Bearer ${token}`
+    }}
+  )
+  if (response.status === 204) {
+    RemovefromCart(productId, size);
+  }
+  else{
+  const updatedItem=response.data
+  RemovefromCart(updatedItem.productId,updatedItem.size)
+}
+  set_loading(false)
+}
+catch(err){
+  console.log(err)
+}
+
+  }
   useEffect(()=>{
     if(cart===null){
       window.location.reload()
     }
   },[cart])
+
 useEffect(()=>{
-  if(cart){
+  if(Array.isArray(cart)){
   const total_price=cart.reduce((acc,product)=>{
   return acc+(product.quantity*product.price)
   },0)
@@ -37,7 +94,7 @@ else{
     <div>
       
     <div>
-      {cart&&cart.length>0?( cart.map((product)=>{
+      {loading?(<Loading/>):cart&&cart.length>0?(cart.map((product)=>{
       
   return (
    
@@ -56,9 +113,9 @@ else{
   {product.category==="jewelery"?'':<h1 className="font-sans text-lg font-semibold ">Size: <span className="">{product.size}</span></h1>}
   <h1 className="pb-3 font-serif font-semibold">Total Price: <span className="font-thin font-sans">{product.price*product.quantity} L.E</span></h1>
   <div className="flex items-center border-2 border-black px-6 py-1 gap-3 md:gap-5"> 
-    <button onClick={() => { addtocart(product.productId, product.price, product.title,product.image,product.size) }} className="font-bold font-serif text-sm md:text-lg">+</button>
+    <button onClick={token?()=>{UpdateCart(product.productId,product.size)}:() => { addtocart(product.productId, product.price, product.title,product.image,product.size) }} className="font-bold font-serif text-sm md:text-lg">+</button>
     <h1 className="font-bold text-sm md:text-lg">{product.quantity}</h1>
-    <button onClick={() => { RemovefromCart(product.productId,product.size) }} className="font-bold font-serif text-sm md:text-lg">-</button>
+    <button onClick={token?()=>{DeleteItem(product.productId,product.size)}:() => { RemovefromCart(product.productId,product.size) }} className="font-bold font-serif text-sm md:text-lg">-</button>
   </div>
 </div>
       
@@ -74,8 +131,7 @@ else{
         <h1 className="font-serif font-bold mt-3 text-md md:text-xl"> Estimated Total: <span className=" pl-2 font-semibold font-sans">{sum}L.E</span></h1>
        </div>
      <div className="flex items-center justify-center p-3 mb-5 md:mt-5">
-     {token?<button onClick={handleNavigate} className="bg-black px-9 py-2 hover:bg-transparent border-2 font-serif border-black hover:text-black text-white uppercase font-bold">Proceed to checkout</button>:
-     <Link to="/signup?message=You must Login first to start ordering"><button className="bg-black px-12 py-2 hover:bg-transparent border-2 font-serif border-black hover:text-black text-white uppercase font-bold">Login First</button></Link>}
+     <button onClick={handleNavigate} className="bg-black px-9 py-2 hover:bg-transparent border-2 font-serif border-black hover:text-black text-white uppercase font-bold">Proceed to checkout</button>
      </div>
     </div>
 

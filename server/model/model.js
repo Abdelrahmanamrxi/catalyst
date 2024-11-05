@@ -32,6 +32,9 @@ productId:{
 },
 size:{
     type:String,
+},price:{
+    type:Number,
+    required:true
 }
 
 }
@@ -64,8 +67,8 @@ const order=mongoose.Schema({
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:true
+        ref:'User'
+       
     },
     phone:{
         type:String,

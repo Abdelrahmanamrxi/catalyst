@@ -22,11 +22,17 @@ import { useState } from "react"
   
  
   useEffect(()=>{
-  const TotalCapacity=cart.reduce((acc,product)=>{
+if(Array.isArray(cart)){
+  const TotalCapacity=
+  cart.reduce((acc,product)=>{
     return acc+product.quantity
   },0)
   set_sum(TotalCapacity)
-
+}
+else{
+  set_sum(0)
+}
+  
     },[cart])
 
 
@@ -63,7 +69,7 @@ import { useState } from "react"
               className="text-black md:text-3xl font-bold text-2xl">&times;</button>
             </div>
             <nav data-aos="fade-right" className="flex flex-col p-4"> {/** Displaying MESSAGE IF CART IS EMPTY */}
-            {cart.length<=0?<div className="flex flex-col justify-center items-center "><h1 className="font-serif font-bold text-2xl">Your Cart is Empty</h1>
+            {Array.isArray(cart)&&cart.length<=0?<div className="flex flex-col justify-center items-center "><h1 className="font-serif font-bold text-2xl">Your Cart is Empty</h1>
              <Link className="bg-black mt-5 text-white font-bold px-4 py-2 rounded-md" to="/shop">Continue Shopping</Link> </div> : //rendering CART IF CART HAS ITEMS INSIDE IT
              
              <div><p className="text-black text-left  text-3xl font-serif font-bold uppercase">cart</p>

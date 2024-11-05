@@ -1,9 +1,10 @@
 import{useState,useEffect,useContext} from 'react'
-import { useNavigate, useParams,Link, useLocation } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import axios  from 'axios'
 import { CartContext } from "../App"
 import Loading from '../layout/Loading'
 import { IoMdArrowRoundBack } from "react-icons/io"
+import { DecodeJWT, handleBack } from '../utility/functions'
 
 
 export default function Product(){
@@ -16,12 +17,47 @@ export default function Product(){
     const{id}=useParams()
     const[loader,set_loader]=useState(false)
 
-    const {addtocart}=useContext(CartContext)
+    const {addtocart,set_cartMenu,set_cart}=useContext(CartContext)
     const navigate=useNavigate()
     const location=useLocation()
-  
+
 
     const sizes=['XS','S','M','L','XL']
+   async function AddedCart(productId,category,price){
+      try{
+        if(!selected_size&&category!='jewelery'){
+          set_message('Please choose a size')
+          setIsDisabled(true)
+          return;
+        }
+        else{
+      set_message('')
+      const {userId}=DecodeJWT(token)
+      const response=await axios.post('http://localhost:5000/api/cart/add',{
+        userId,
+        quantity:1,
+        productId:productId,
+        size:selected_size?selected_size:''
+       ,price
+
+      },{
+        headers:{
+        'Authorization':
+        `Bearer ${token}`
+      },
+
+
+      })
+     console.log(response.data)
+      const {title,image,category}=response.data
+      addtocart(productId,price,title,image,selected_size,category)
+      setIsDisabled(false)
+    }
+    }
+    catch(err){
+      console.log(err)
+    }
+    }
     
   function handleClick(_id,price,title,image,category){
     if(!selected_size&&category!="jewelery"){
@@ -29,10 +65,9 @@ export default function Product(){
       setIsDisabled(true)
       return;
     }
-
    else{
       set_message('')
-     addtocart(_id,price,title,image, selected_size,category);
+      addtocart(_id,price,title,image, selected_size,category);
       setIsDisabled(false);
    }
   }
@@ -56,17 +91,16 @@ export default function Product(){
      }
      getProduct()
     },[])
+
+   
+
   
-    const handleBack = () => {
-      const path = location.state?.from ? `${location.state.from}${location.search || ''}` : -1;
-      navigate(path);
-    };
     return(
       <div>
 {loader?(<Loading/>):(
  <div>
  
-  <div onClick={handleBack} className='m-5 hover:underline cursor-pointer flex gap-1 flex-row items-center justify-start'>
+  <div onClick={()=>{handleBack(navigate)}} className='m-5 hover:underline cursor-pointer flex gap-1 flex-row items-center justify-start'>
     <h1><IoMdArrowRoundBack/></h1>
     <h1 className='text-lg font-serif'>Back</h1>
   </div>
@@ -115,7 +149,7 @@ export default function Product(){
   {message?<h1 className='text-red-800 font-semibold mt-5 text-lg'>{message}</h1>:''}
       <button
        disabled={product.category==="jewelery"?false:isDisabled}
-      onClick={()=>{handleClick(product._id,product.price,product.title,product.image,product.category)}}
+      onClick={token?()=>{AddedCart(product._id,product.category,product.price)}:()=>{handleClick(product._id,product.price,product.title,product.image,product.category)}}
         className="flex items-center justify-center mt-5 rounded-md bg-black px-4 sm:px-5 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
       >
         <svg
