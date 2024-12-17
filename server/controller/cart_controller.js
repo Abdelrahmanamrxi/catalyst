@@ -139,13 +139,16 @@ const UpdateCart=async(req,res,next)=>{
 }
 const GetCart=async(req,res,next)=>{
   const{userId}=req.query
+  if(!userId){
+    return res.json([])
+  }
   try{
   let cart=await Cart.findOne({userId}).populate({
     path:'items.productId',
     select:'title image'
   })
   if(!cart){
-    res.status.json([])
+    res.json([])
   }
   const formattedCart = cart.items.map(item => ({
     productId: item.productId._id,

@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { DecodeJWT } from "../utility/functions";
 import Error from "../layout/Error";
 import  img from '../assets/check.png'
-import { CartContext } from "../App";
+import { CartContext } from "../Context/ContextCart";
 import { useContext } from "react";
 import  axios from 'axios'
 

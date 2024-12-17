@@ -1,17 +1,19 @@
 import {  useContext, useEffect } from "react"
-import { CartContext } from "../App"
+import { CartContext } from "../Context/ContextCart"
 import { useState } from "react"
-import { Link ,useNavigate} from "react-router-dom"
+import {useNavigate} from "react-router-dom"
 import axios from "axios"
 import { DecodeJWT } from "../utility/functions"
+import Loading_Cart from "../layout/Loading_Cart"
 import Loading from "../layout/Loading"
 
 export default function Cart() {
  
     const cart=JSON.parse(localStorage.getItem('cart'))
-   const {addtocart,RemovefromCart,set_cart}=useContext(CartContext)
+   const {addtocart,RemovefromCart,LoadingState}=useContext(CartContext)
    const [loading,set_loading]=useState(false)
    const [sum,set_sum]=useState(0)
+   const[loadingProductID,set_loadingProduct]=useState('')
    const navigate=useNavigate()
    const token=localStorage.getItem('Token')
 
@@ -21,7 +23,7 @@ export default function Cart() {
   };
   const UpdateCart=async(productId,size)=>{
     try{
-      
+      set_loadingProduct(productId)
       const {userId}=DecodeJWT(token)
       set_loading(true)
       const response=await axios.put('http://localhost:5000/api/cart/update',
@@ -38,7 +40,8 @@ export default function Cart() {
       })
       const {category,image,title,price}=response.data
        addtocart(productId,price,title,image,size,category)
-      set_loading(false)
+       set_loadingProduct('')
+       set_loading(false)
     }
     catch(err){
       console.log(err)
@@ -47,6 +50,7 @@ export default function Cart() {
   const DeleteItem=async(productId,size)=>{
     try{
       set_loading(true)
+      set_loadingProduct(productId)
       const {userId}=DecodeJWT(token)
       const response=await axios.put('http://localhost:5000/api/cart/delete',{
       userId:userId,
@@ -63,6 +67,7 @@ export default function Cart() {
   else{
   const updatedItem=response.data
   RemovefromCart(updatedItem.productId,updatedItem.size)
+  set_loadingProduct('')
 }
   set_loading(false)
 }
@@ -93,8 +98,8 @@ else{
   return (
     <div>
       
-    <div>
-      {loading?(<Loading/>):cart&&cart.length>0?(cart.map((product)=>{
+  <div>
+     {LoadingState?(<Loading/>):cart&&cart.length>0?(cart.map((product)=>{
       
   return (
    
@@ -111,10 +116,22 @@ else{
     {product.title}
   </h1>
   {product.category==="jewelery"?'':<h1 className="font-sans text-lg font-semibold ">Size: <span className="">{product.size}</span></h1>}
-  <h1 className="pb-3 font-serif font-semibold">Total Price: <span className="font-thin font-sans">{product.price*product.quantity} L.E</span></h1>
-  <div className="flex items-center border-2 border-black px-6 py-1 gap-3 md:gap-5"> 
+  
+  <h1 className="pb-3 font-serif flex items-center font-semibold">
+  Total Price: 
+  <span className="font-thin relative font-sans flex items-center">
+    {loading && loadingProductID === product.productId ? (
+      <div className="loader-cart" />
+    ) : (
+      `${product.price * product.quantity} L.E`
+    )}
+  </span>
+</h1>
+
+
+  <div className="flex items-center relative border-2 border-black px-6 py-1 gap-3 md:gap-5"> 
     <button onClick={token?()=>{UpdateCart(product.productId,product.size)}:() => { addtocart(product.productId, product.price, product.title,product.image,product.size) }} className="font-bold font-serif text-sm md:text-lg">+</button>
-    <h1 className="font-bold text-sm md:text-lg">{product.quantity}</h1>
+   {loadingProductID===product.productId&&loading?<Loading_Cart/>:<h1 className="font-bold text-sm md:text-lg">{product.quantity}</h1>}
     <button onClick={token?()=>{DeleteItem(product.productId,product.size)}:() => { RemovefromCart(product.productId,product.size) }} className="font-bold font-serif text-sm md:text-lg">-</button>
   </div>
 </div>

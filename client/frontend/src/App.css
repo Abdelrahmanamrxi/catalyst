@@ -4,7 +4,7 @@
 html {
     scroll-behavior: smooth;
   }
-  .loader {
+ .loader {
     border: 8px solid #f3f3f3; 
     border-top: 8px solid black; 
     border-radius: 50%;
@@ -12,6 +12,7 @@ html {
     height: 60px;
     animation: spin 1s linear infinite;
   }
+  
   
   /* Animation */
   @keyframes spin {
@@ -25,9 +26,10 @@ html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh; 
+    height: 100vh;   
+    margin: 0;
+    width: 100%;
   }
-
 ::-webkit-scrollbar {
   width: 8px; 
 }
@@ -47,4 +49,35 @@ html {
 ::-webkit-scrollbar-track {
   background: #f1f1f1; 
 }
-  
+ 
+
+/* Ensure loader is circular */
+.loader-cart {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid black;
+  border-radius: 50%;
+  width: 20px;  /* Size of the circle */
+  height: 20px; /* Size of the circle */
+  animation: spin 1s linear infinite;
+}
+
+/* Animation for spinning */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Adjust sizes for mobile */
+@media (max-width: 768px) {
+  .loader-cart {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loader-cart {
+    width: 16px;
+    height: 16px;
+  }
+}

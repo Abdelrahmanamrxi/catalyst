@@ -8,7 +8,7 @@ import{useEffect,useContext} from 'react'
 import { memo } from "react"
 import { useNavigate } from "react-router-dom"
 import { Logout } from "../utility/functions";
-import { CartContext } from "../App";
+import { CartContext } from "../Context/ContextCart";
 import Cart from "../pages/Cart";
 import 'aos/dist/aos.css';
 import { useState } from "react"
@@ -77,8 +77,13 @@ else{
             <h1 className="mt-3 font-serif text-md">
               Price
               </h1></div>
+
               <hr className="w-full border-black mb-5 mt-3 border-t-2"/>
-              <Cart/></div>}
+              
+             <Cart/>  
+
+              </div>
+              }
             </nav>
           </div></nav>
           

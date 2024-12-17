@@ -9,6 +9,7 @@ const connectDB=require('./db/connect')
 const users=require('./routes/user_routes')
 const orders=require('./routes/order_routes')
 const cart=require('./routes/cart_routes')
+const dashboard=require('./routes/dashboard_routes')
 
 const app=express()
 const port=process.env.PORT || 5000
@@ -22,6 +23,8 @@ app.use('/api/products',products)
 app.use('/api/users',users)
 app.use('/api/orders',orders)
 app.use('/api/cart',cart)
+app.use('/api/dashboard',dashboard)
+
 
 
 app.use('*',notFound)

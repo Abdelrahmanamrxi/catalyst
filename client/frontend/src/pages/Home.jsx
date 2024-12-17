@@ -6,7 +6,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import About from './About'
 import axios from 'axios'
 import Product_Card from '../utility/Product_Card'
-import { CartContext } from '../App'
+import { CartContext } from '../Context/ContextCart'
 import Loading from '../layout/Loading'
 import { CheckToken } from '../utility/functions'
 export default function Home() {

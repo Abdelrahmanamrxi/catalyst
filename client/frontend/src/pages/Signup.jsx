@@ -4,7 +4,7 @@ import { useState, useEffect, memo } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { useContext } from 'react'
-import { CartContext } from '../App'
+import { CartContext } from '../Context/ContextCart'
 
 function Signup() {
 

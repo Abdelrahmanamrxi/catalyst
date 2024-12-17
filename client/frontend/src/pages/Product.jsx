@@ -1,10 +1,11 @@
 import{useState,useEffect,useContext} from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import axios  from 'axios'
-import { CartContext } from "../App"
+import { CartContext } from "../Context/ContextCart"
 import Loading from '../layout/Loading'
 import { IoMdArrowRoundBack } from "react-icons/io"
 import { DecodeJWT, handleBack } from '../utility/functions'
+
 
 
 export default function Product(){
@@ -17,21 +18,23 @@ export default function Product(){
     const{id}=useParams()
     const[loader,set_loader]=useState(false)
 
-    const {addtocart,set_cartMenu,set_cart}=useContext(CartContext)
+    const {addtocart,set_state,set_cartMenu}=useContext(CartContext)
     const navigate=useNavigate()
     const location=useLocation()
 
 
     const sizes=['XS','S','M','L','XL']
    async function AddedCart(productId,category,price){
+   if(!selected_size&&category!='jewelery'){
+    set_message('Please choose a size')
+    setIsDisabled(true)
+    return;
+  }
+  else{
       try{
-        if(!selected_size&&category!='jewelery'){
-          set_message('Please choose a size')
-          setIsDisabled(true)
-          return;
-        }
-        else{
-      set_message('')
+        set_cartMenu(true)
+        set_state(true)
+        set_message('')
       const {userId}=DecodeJWT(token)
       const response=await axios.post('http://localhost:5000/api/cart/add',{
         userId,
@@ -48,15 +51,17 @@ export default function Product(){
 
 
       })
-     console.log(response.data)
+      
       const {title,image,category}=response.data
       addtocart(productId,price,title,image,selected_size,category)
+     
       setIsDisabled(false)
     }
-    }
+    
     catch(err){
       console.log(err)
     }
+  }
     }
     
   function handleClick(_id,price,title,image,category){
@@ -90,7 +95,7 @@ export default function Product(){
       }
      }
      getProduct()
-    },[])
+    },[id])
 
    
 
