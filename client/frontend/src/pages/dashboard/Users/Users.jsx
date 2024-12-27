@@ -1,11 +1,21 @@
 import {useEffect, useState} from 'react'
-import img from '../../assets/right.png'
+import img from '../../../assets/right.png'
 import axios from 'axios'
+import EditUser from './EditUser'
 export default function Users() {
     const [user,set_user]=useState([])
     const [current_page,set_current]=useState(1)
+    const [selected_user,set_selection]=useState({})
+    const[edit,set_edit]=useState({
+      name:'edit',
+      action:false
+    })
     const[totalPages,set_total]=useState(0)
- 
+    const[remove,set_remove]=useState({
+      name:'remove',
+      action:false
+    })
+
     const getUsers=async()=>{
         try{
         const response=await axios.get(`http://localhost:5000/api/dashboard/users?page=${current_page}&limit=8`)
@@ -17,6 +27,18 @@ export default function Users() {
         catch(err){
             console.log(err)
         }
+    }
+    function handleEdit(user,action){
+      if(action.name==="edit"){
+        set_edit({...action,action:!action.type})
+      }
+      else if (action.name==="remove"){
+        set_remove({...action,action:!action.type})
+       
+      }
+      
+    
+      set_selection(user)
     }
     function IncrementPage(){
         if(totalPages>=current_page){
@@ -41,10 +63,10 @@ export default function Users() {
     
  return(
    <div className='lg:w-2/3 lg:flex-col '>
-    <h1 className='m-5 font-mono text-lg'>Current Total Users:<span className='font-mono font-light'>123</span></h1>
+    <h1 className='m-5 font-mono text-2xl font-bold'>User Dashboard</h1>
 <div className=" flex justify-center w-full p-4">
   <div className="overflow-x-auto md:overflow-visible w-full sm:w-auto">
-    <table className="w-full md:w-auto border-collapse border shadow-md rounded-lg border-gray-300">
+    <table className="w-full relative md:w-auto border-collapse border shadow-md rounded-lg border-gray-300">
       <thead>
         <tr>
           <th className="border border-gray-300 p-1 text-xs sm:p-2 sm:text-sm">User ID</th>
@@ -54,6 +76,7 @@ export default function Users() {
         </tr>
       </thead>
       <tbody>
+        
         {user.map((user) => (
           <tr key={user.userId}>
             <td className="border text-[10px] sm:text-xs p-1 sm:p-2 border-gray-300">{user.userId}</td>
@@ -61,10 +84,10 @@ export default function Users() {
             <td className="border text-[10px] sm:text-xs p-1 sm:p-2 border-gray-300">{user.updatedAt}</td>
             <td className="border  border-gray-300">
               <div className="flex flex-col sm:flex-row justify-center items-center">
-                <button className=" w-16 px-2 py-1 m-2 bg-green-500 text-white text-[10px] sm:text-xs rounded-md">
+                <button onClick={()=>{handleEdit(user,edit)}} className=" w-16 px-2 py-1 m-2 font-semibold hover:bg-green-800 bg-green-500 text-white text-[10px] sm:text-xs rounded-md">
                   Edit
                 </button>
-                <button className=" w-16 px-2 py-1 m-2 bg-red-800 text-white text-[10px] sm:text-xs rounded-md">
+                <button onClick={()=>{handleEdit(user,remove)}} className=" w-16 px-2 py-1 m-2 bg-red-800 font-semibold hover:bg-red-900 text-white text-[10px] sm:text-xs rounded-md">
                   Delete
                 </button>
               </div>
@@ -72,7 +95,25 @@ export default function Users() {
           </tr>
         ))}
       </tbody>
+     
+      {edit.action || remove.action?
+      <tfoot>
+        <tr>
+          <td colSpan={3}>
+      <EditUser
+      {...selected_user}
+      set_edit={set_edit}
+      set_remove={set_remove}
+      remove={remove}
+      edit={edit}
+      />
+      </td>
+      </tr>
+      </tfoot>
+       :''}
+     
     </table>
+   
   </div>
   
 </div>

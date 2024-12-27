@@ -117,7 +117,7 @@ if(!current_password||!email){
    }
    
    await user.save();
-   res.status(201).json({msg:"Password Updated Succesfully."})
+   res.status(200).json({msg:"Password Updated Succesfully."})
   }
   catch(err){
     return next(createError('Error Updating Password'),403)

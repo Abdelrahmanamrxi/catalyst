@@ -9,7 +9,7 @@ import { DecodeJWT, handleBack } from '../utility/functions'
 
 
 export default function Product(){
-  const token=localStorage.getItem('Token')
+  
   
     const [selected_size,set_selected]=useState('')
     const[message,set_message]=useState('')
@@ -17,11 +17,10 @@ export default function Product(){
     const[product,set_product]=useState({})
     const{id}=useParams()
     const[loader,set_loader]=useState(false)
-
     const {addtocart,set_state,set_cartMenu}=useContext(CartContext)
     const navigate=useNavigate()
     const location=useLocation()
-
+    const token=localStorage.getItem('Token')
 
     const sizes=['XS','S','M','L','XL']
    async function AddedCart(productId,category,price){

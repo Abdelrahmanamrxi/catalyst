@@ -21,4 +21,37 @@ catch(err){
     return next(createError('Error trying to retrieve Users'),500)
 }
 }
-module.exports={getUsers}
+const UpdateUser=async(req,res,next)=>{
+    const {password,email}=req.body
+    try{
+    if(!password || password.length<7){
+        return next(createError("Please fill in atleast 7 characters for password."))
+    }
+  
+    let user=await User.findOne({email})
+    if(!user){
+        return res.status(404).json({msg:"Couldn't find specific User"})
+    }
+    user.passswordUpdatedCount=user.passswordUpdatedCount+1
+    await user.save()
+    res.status(200).json({msg:'Password Updated Succesfully'})
+}
+catch(err){
+    return next(createError("Unknown Error while Updating Password"),500)
+}
+}
+const DeleteUser=async(req,res,next)=>{
+    const {email}=req.query
+ try{  
+    const user=await User.findOneAndDelete({email})
+    if(!user){
+        return res.status(404).json({msg:"Couldn't Find Specific User"})
+    }
+    res.status(200).json({msg:'User has been deleted succesfully.'})
+}
+    
+    catch(err){
+        return next(createError("Unexpected Error",500))
+    }
+}
+module.exports={getUsers,UpdateUser,DeleteUser}

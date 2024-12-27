@@ -9,10 +9,11 @@ import { Suspense } from 'react'
 import Checkout from './pages/Checkout'
 import AdminAuth from './pages/AdminAuth'
 import Admin from './pages/dashboard/Admin'
-import Users from './pages/dashboard/Users'
+import Users from './pages/dashboard/Users/Users'
 import { lazy } from 'react'
 import DashMenu from './pages/dashboard/DashMenu'
 import DashboardContext from './Context/DashboardContext'
+import Orders from './pages/dashboard/Orders'
 
 
 const Product=lazy(()=>import('./pages/Product'))
@@ -35,6 +36,7 @@ function App() {
     
       <Route path="/admin" element={<Admin/>}/>
       <Route path='/admin/users' element={<Users/>}/>
+      <Route path="/admin/orders" element={<Orders/>}/>
    
       </Route>
       <Route path='/auth' element={<AdminAuth/>}/>

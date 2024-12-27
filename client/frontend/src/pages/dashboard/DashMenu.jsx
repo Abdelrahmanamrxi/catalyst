@@ -4,6 +4,7 @@ import { IoIosMenu } from "react-icons/io";
 import { Outlet } from 'react-router-dom';
 
 
+
 export const DashMenu = () => {
     const [sideBar,set_sideBar]=useState(false)
   return (
@@ -19,7 +20,7 @@ export const DashMenu = () => {
       </div>
       
         {sideBar?(
-        <div className={`fixed top-0 left-0 w-1/2 h-screen opacity-95 bg-black text-white z-50`} >
+        <div  className={`fixed top-0 left-0 w-1/2 h-screen opacity-95 bg-black text-white z-50`} >
            <div className="flex justify-end p-4">
               <button onClick={() => set_sideBar(!sideBar)} className="text-white text-2xl">&times;</button>
             </div>
